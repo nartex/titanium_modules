@@ -115,7 +115,9 @@ public class CompressionModule extends KrollModule {
 			ZipInputStream zin = new ZipInputStream(
 					new BufferedInputStream(fin));
 			ZipEntry ze = null;
+			boolean hasEntries = false;
 			while ((ze = zin.getNextEntry()) != null) {
+				hasEntries = true;
 				String target = destPath + "/" + ze.getName();
 				if (ze.isDirectory()) {
 					ensureDirectoryExists(target);
@@ -127,7 +129,11 @@ public class CompressionModule extends KrollModule {
 			}
 			zin.close();
 			fin.close();
-			return "success";
+			if (hasEntries){
+				return "success";
+			}else{
+				return "No entries";
+			}
 		} catch (Exception e) {
 			Util.e("Hit exception while unzipping the archive!", e);
 			return e.toString();
